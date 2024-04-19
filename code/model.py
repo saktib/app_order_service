@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 class Product(db.Model):
+    __tablename__ = 'product_id'
     product_id = db.Column(db.Integer, primary_key=True)
     product_name = db.Column(db.String(80), unique=True, nullable=False)
     product_price = db.Column(db.Float, nullable=False)
@@ -18,6 +19,18 @@ class Order(db.Model):
     order_quantity = db.Column(db.Integer, nullable=False)
     order_price = db.Column(db.Float, nullable=False)
     total_price = db.Column(db.Float, nullable=False)
+
+    def to_dict(self):
+        # Create a dictionary with only desired attributes
+        return {
+            'order_id': self.order_id,
+            'user_id': self.user_id,
+            'product_id': self.product_id,
+            'order_quantity': self.order_quantity,
+            'order_price': self.order_price,
+            'total_price': self.total_price,
+        }
+
 
     def __init__(self, user_id, product_id, order_quantity, order_price):
         self.user_id = user_id

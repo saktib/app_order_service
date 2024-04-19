@@ -7,11 +7,11 @@ app.config.from_object(Config)
 
 with app.app_context():
     db.init_app(app)
-    db.create_all()
 
 @app.route('/orders', methods=['GET'])
 def get_orders():
     orders = Order.query.all()
+    print(orders)
     return jsonify([order.to_dict() for order in orders]), 200
 
 @app.route('/orders/<int:order_id>', methods=['GET'])
@@ -28,13 +28,14 @@ def add_order():
     if not all([user_id, product_id, order_quantity]):
         return jsonify({'error': 'Missing required fields'}), 400
 
-    order_price = order_quantity * Product.query.get(product_id).product_price
+    #print(Product.query.get(product_id))
+    order_price = order_quantity * 10
     # temp orderprice value need to learn how to get product price from db and fix :)
     try:
         order = Order(user_id, product_id, order_quantity, order_price)
         db.session.add(order)
         db.session.commit()
-        return jsonify(order.to_dict()), 201
+        return jsonify({"order": " added succesfully"}), 201
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 

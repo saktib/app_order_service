@@ -1,13 +1,14 @@
 from flask import Flask, jsonify, request
-from model import db, Order, Product
 from config import Config
+from model import db, Order, Product
 
 app = Flask(__name__)
-app.config.from_object(Config)
 
-with app.app_context():
-    db.init_app(app)
-    db.create_all()
+app.config['SQLALCHEMY_DATABASE_URI'] = Config.SQLALCHEMY_DATABASE_URI
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = Config.SQLALCHEMY_TRACK_MODIFICATIONS
+
+db.init_app(app)
+db.create_all()
 
 @app.route('/orders', methods=['GET'])
 def get_orders():
@@ -50,6 +51,9 @@ def delete_order(order_id):
     else:
         return jsonify({'error': 'Order not found'}), 404
 
+@app.route('/', methods=['GET'])
+def entryOrder():
+    return 'Welcome to Orders API'
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5010, debug=True)
+    app.run(host='0.0.0.0', debug=True)

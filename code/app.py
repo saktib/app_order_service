@@ -7,8 +7,9 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = Config.SQLALCHEMY_DATABASE_URI
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = Config.SQLALCHEMY_TRACK_MODIFICATIONS
 
-db.init_app(app)
-db.create_all()
+with app.app_context():
+    db.init_app(app)
+    db.create_all()
 
 @app.route('/orders', methods=['GET'])
 def get_orders():

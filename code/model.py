@@ -27,7 +27,7 @@ class Product(db.Model):
 
 
 class Order(db.Model):
-    __tablename__ = 'order'
+    __tablename__ = 'ordertable'
     order_id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer)
     product_id = db.Column(db.Integer)

@@ -4,12 +4,14 @@ services:
   app-order-service:
     depends_on:
       - database
+    links:
+      - database
     restart: unless-stopped
     build: ./code
     environment:
-      MYSQL_USER: 'user'
+      MYSQL_USER: 'root'
       MYSQL_PASSWORD: 'password'
-      MYSQL_DATABASE: 'testdb'
+      MYSQL_DATABASE: 'scalable'
     ports:
       - 8081:5000
     volumes:
@@ -21,19 +23,25 @@ services:
     image: mysql:8
     restart: always
     environment:
-      MYSQL_DATABASE: 'testdb'
-      MYSQL_USER: 'user'
-      MYSQL_PASSWORD: 'password'
-      MYSQL_ROOT_PASSWORD: 'password'
+      MYSQL_DATABASE: scalable
+      MYSQL_ROOT_PASSWORD: root
     ports:
-      - '3306:3306'
+      - '3200:3306'
     expose:
       - '3306'
     volumes:
-      - scalablel-db:/var/lib/mysql
-      - ./code/db:/docker-entrypoint-initdb.d
+      - scalable-flask-db:/var/lib/mysql
+      - ./db:/docker-entrypoint-initdb.d/first.sql:ro
+
+  admin:
+    image: phpmyadmin
+    restart: always
+    environment:
+      - PMA_ARBITRARY=1
+    ports:
+      - 8080:80
 
 
 volumes:
-    scalablel-db:
+    scalable-flask-db:
       driver: local

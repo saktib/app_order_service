@@ -25,17 +25,19 @@ def get_order_by_id(order_id):
 @app.route('/orders', methods=['POST'])
 def add_order():
     user_id = request.json.get('user_id')
-    product_id = request.json.get('product_id')
+    product_ids = request.json.get('product_ids')
     order_quantity = request.json.get('order_quantity')
 
-    if not all([user_id, product_id, order_quantity]):
-        return jsonify({'error': 'Missing required fields'}), 400
+    if not all([user_id, product_ids, order_quantity]):
+        return jsonify({'error': 'Missing required fields [user_id, product_ids, order_quantity]'}), 400
 
     print(request.json)
-    prod = db.session.query(Product).get(product_id)
-    order_price = order_quantity * prod.product_price
+    order_price = 0
+    for product_id in product_ids:
+        prod = db.session.query(Product).get(product_id)
+        order_price += order_quantity * prod.price
     try:
-        order = Order(user_id, product_id, order_quantity, order_price)
+        order = Order(user_id, product_ids, order_quantity, order_price)
         db.session.add(order)
         db.session.commit()
         return jsonify({"order": " added succesfully"}), 201
